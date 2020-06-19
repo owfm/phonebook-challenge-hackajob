@@ -11,4 +11,8 @@ yarn
 yarn start
 ```
 
-The app is build with React using CRA and simple styling with emotion. It is a basic CRUD app for a phonebook, allowing local editing, adding, and deleting of items. This app was coded in about 2 hours so the styling is basic!
+The app is build with React using CRA and simple styling with emotion. It is a basic CRUD app for a phonebook, allowing local editing, adding, and deleting of items. Also implemented is sorting and searching.
+
+This app was coded in about 2 hours so the styling is basic!
+
+Nice-to-have would have been address and phonenumber validation using yup or similar.
