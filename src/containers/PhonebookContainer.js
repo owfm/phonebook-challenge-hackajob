@@ -14,16 +14,25 @@ const emptyUser = {
 function PhonebookContainer(props) {
   const [entries, setPhonebookEntries] = useState([]);
   const [sortState, setSortState] = useState("unsorted");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchEntries = async () => {
-      const data = await fetch(API_URL);
-      const json = await data.json();
-      // give entries unique ID to help with editing
-      const entries = json.contacts.map((entry) => {
-        return { id: uuid(), ...entry };
-      });
-      setPhonebookEntries(entries);
+      try {
+        setLoading(true);
+        const data = await fetch(API_URL);
+        const json = await data.json();
+        // give entries unique ID to help with editing
+        const entries = json.contacts.map((entry) => {
+          return { id: uuid(), ...entry };
+        });
+        setPhonebookEntries(entries);
+      } catch (e) {
+        setError("Couldn't fetch the data. Please try a refresh.");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchEntries();
   }, []);
@@ -55,6 +64,9 @@ function PhonebookContainer(props) {
       });
     },
   };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return <PhoneBook entries={entries} operations={phonebookOperations} />;
 }
