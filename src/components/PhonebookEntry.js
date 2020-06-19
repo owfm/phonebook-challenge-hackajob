@@ -10,59 +10,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const PhonebookEntry = ({ entry, edit, del }) => {
-  const { name, address, phone_number } = entry;
   const [editButtonsStatus, setEditButtonsStatus] = useState(
     entry.new ? "editing" : "default"
   ); // if this is a new entry, start in edit mode.
-  const [hovering, setHovering] = useState(false);
+
   const [fields, handleFieldChange] = useFormFields({ ...entry });
-
-  const TableRow = styled.tr`
-    height: 50px;
-    padding: 0.5rem;
-
-    &:hover {
-      background: gainsboro;
-    }
-  `;
-
-  const TableCell = styled.td`
-    padding: 0.5rem;
-  `;
-
-  const NoStyleButton = styled.button`
-    background: none;
-    border: none;
-  `;
-  const ConfirmButton = styled.button`
-    background: none;
-    border: none;
-    color: crimson;
-    font-weight: bold;
-  `;
-
-  const Input = styled.input`
-    width: inherit;
-  `;
-
-  const DeleteConfirmItem = styled.td`
-    font-weight: bold;
-    color: crimson;
-  `;
 
   const handleDelete = (e) => {
     del(entry.id);
   };
 
-  const handleMouseEnter = (e) => {
-    setHovering(true);
-  };
-
-  const handleMouseLeave = (e) => {
-    setHovering(false);
-  };
-
   const handleEdit = (e) => {
+    console.log(fields);
+    console.log(e);
     edit({ ...fields, new: false });
     setEditButtonsStatus("default");
   };
@@ -74,17 +34,18 @@ const PhonebookEntry = ({ entry, edit, del }) => {
 
   const validateEdit = () => {
     const { name, address, phone_number } = fields;
-    if (name === "" || address === "" || phone_number == "") return false;
+    if (name === "" || address === "" || phone_number === "") return false;
     return true;
   };
 
   const renderEditButtons = () => {
-    if (!hovering && editButtonsStatus === "default") return <tr></tr>;
-
-    if (hovering && editButtonsStatus === "default")
+    if (editButtonsStatus === "default")
       return (
-        <TableCell>
-          <NoStyleButton onClick={() => setEditButtonsStatus("confirmDelete")}>
+        <TableCell className="hide">
+          <NoStyleButton
+            hoverColour="crimson"
+            onClick={() => setEditButtonsStatus("confirmDelete")}
+          >
             <FontAwesomeIcon icon={faTrashAlt} />
           </NoStyleButton>
           <NoStyleButton onClick={() => setEditButtonsStatus("editing")}>
@@ -97,11 +58,16 @@ const PhonebookEntry = ({ entry, edit, del }) => {
     if (editButtonsStatus === "confirmDelete")
       return (
         <DeleteConfirmItem>
-          Sure?
-          <ConfirmButton onClick={handleDelete}>Y</ConfirmButton> /{" "}
-          <ConfirmButton onClick={() => setEditButtonsStatus("default")}>
-            N
-          </ConfirmButton>
+          Delete?
+          {/* <FontAwesomeIcon icon={faTrashAlt} /> */}
+          <NoStyleButton hoverColour="crimson" onClick={handleDelete}>
+            <FontAwesomeIcon icon={faCheck} />
+          </NoStyleButton>
+          {"  "}
+          {"  "}
+          <NoStyleButton onClick={() => setEditButtonsStatus("default")}>
+            <FontAwesomeIcon icon={faTimes} />
+          </NoStyleButton>
         </DeleteConfirmItem>
       );
 
@@ -118,54 +84,19 @@ const PhonebookEntry = ({ entry, edit, del }) => {
           </NoStyleButton>
         </TableCell>
       );
-
-    return <tr></tr>;
-  };
-
-  const renderEntryValues = () => {
-    if (editButtonsStatus !== "editing")
-      return (
-        <>
-          <TableCell>{name}</TableCell>
-          <TableCell>{address}</TableCell>
-          <TableCell>{phone_number}</TableCell>
-        </>
-      );
-
-    return (
-      <>
-        <TableCell>
-          <Input
-            placeholder="Name"
-            name="name"
-            onChange={handleFieldChange}
-            value={fields.name}
-          />
-        </TableCell>
-        <TableCell>
-          <Input
-            placeholder="Address"
-            name="address"
-            onChange={handleFieldChange}
-            value={fields.address}
-          />
-        </TableCell>
-        <TableCell>
-          <Input
-            placeholder="Phonenumber"
-            name="phone_number"
-            onChange={handleFieldChange}
-            value={fields.phone_number}
-          />
-        </TableCell>
-      </>
-    );
   };
 
   return (
     <>
-      <TableRow onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        {renderEntryValues()}
+      <TableRow>
+        {editButtonsStatus === "editing" ? (
+          <EditableContact
+            fields={fields}
+            handleFieldChange={handleFieldChange}
+          />
+        ) : (
+          <Contact entry={entry} />
+        )}
         {renderEditButtons()}
       </TableRow>
     </>
@@ -173,3 +104,71 @@ const PhonebookEntry = ({ entry, edit, del }) => {
 };
 
 export default PhonebookEntry;
+
+const EditableContact = ({ fields, handleFieldChange }) => (
+  <>
+    <TableCell>
+      <input
+        placeholder="Name"
+        name="name"
+        onChange={handleFieldChange}
+        value={fields.name}
+      />
+    </TableCell>
+    <TableCell>
+      <input
+        placeholder="Address"
+        name="address"
+        onChange={handleFieldChange}
+        value={fields.address}
+      />
+    </TableCell>
+    <TableCell>
+      <input
+        placeholder="Phonenumber"
+        name="phone_number"
+        onChange={handleFieldChange}
+        value={fields.phone_number}
+      />
+    </TableCell>
+  </>
+);
+
+const Contact = ({ entry }) => (
+  <>
+    <TableCell>{entry.name}</TableCell>
+    <TableCell>{entry.address}</TableCell>
+    <TableCell>{entry.phone_number}</TableCell>
+  </>
+);
+
+const TableRow = styled.tr`
+  height: 50px;
+  padding: 0.5rem;
+  & .hide {
+    visibility: hidden;
+  }
+
+  &:hover {
+    background: gainsboro;
+  }
+  &:hover .hide {
+    visibility: visible;
+  }
+`;
+
+const TableCell = styled.td`
+  padding: 0.5rem;
+`;
+
+const NoStyleButton = styled.button`
+  background: none;
+  border: none;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    font-size: 1.2rem;
+    color: ${(props) => props.hoverColour};
+  }
+`;
+
+const DeleteConfirmItem = styled.td``;

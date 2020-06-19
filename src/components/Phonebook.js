@@ -25,6 +25,7 @@ const Phonebook = ({ entries, operations: { addNew, sort, edit, del } }) => {
     min-width: 120px;
     color: snow;
     font-weight: bold;
+    padding: 0.5rem;
   `;
 
   const Table = styled.table`
@@ -42,32 +43,46 @@ const Phonebook = ({ entries, operations: { addNew, sort, edit, del } }) => {
     border-radius: 5px;
     font-weight: bold;
     box-shadow: 2px 2px 2px 2px #ddd;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      font-size: 1.1rem;
+      box-shadow: 4px 4px 4px 4px #ddd;
+    }
   `;
 
   return (
     <PhonebookWrapper>
       <Table>
-        <HeaderRow>
-          <HeaderItem>
-            <span onClick={() => sort("name")}>
-              Name <FontAwesomeIcon icon={faSort} />
-            </span>
-          </HeaderItem>
-          <HeaderItem>
-            <span onClick={() => sort("address")}>
-              Address <FontAwesomeIcon icon={faSort} />
-            </span>
-          </HeaderItem>
-          <HeaderItem>
-            <span onClick={() => sort("phone_number")}>
-              Phone Number <FontAwesomeIcon icon={faSort} />
-            </span>
-          </HeaderItem>
-          <HeaderItem />
-        </HeaderRow>
-        {entries.map((entry) => (
-          <PhonebookEntry key={entry.id} entry={entry} edit={edit} del={del} />
-        ))}
+        <thead>
+          <HeaderRow>
+            <HeaderItem>
+              <span onClick={() => sort("name")}>
+                Name <FontAwesomeIcon icon={faSort} />
+              </span>
+            </HeaderItem>
+            <HeaderItem>
+              <span onClick={() => sort("address")}>
+                Address <FontAwesomeIcon icon={faSort} />
+              </span>
+            </HeaderItem>
+            <HeaderItem>
+              <span onClick={() => sort("phone_number")}>
+                Phone Number <FontAwesomeIcon icon={faSort} />
+              </span>
+            </HeaderItem>
+            <HeaderItem />
+          </HeaderRow>
+        </thead>
+        <tbody>
+          {entries.map((entry) => (
+            <PhonebookEntry
+              key={entry.id}
+              entry={entry}
+              edit={edit}
+              del={del}
+            />
+          ))}
+        </tbody>
       </Table>
       <AddNewContactButton onClick={() => addNew()}>
         <FontAwesomeIcon icon={faUserPlus} /> Add Contact
