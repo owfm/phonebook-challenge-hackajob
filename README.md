@@ -4,7 +4,8 @@ This is a small challenge project for the Hackajob website.
 
 Run the app:
 
-```git clone https://github.com/owfm/phonebook-challenge-hackajob
+```
+git clone https://github.com/owfm/phonebook-challenge-hackajob
 cd phonebook-challenge-hackajob
 yarn
 yarn start
