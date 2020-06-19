@@ -20,11 +20,10 @@ function PhonebookContainer(props) {
       const data = await fetch(API_URL);
       const json = await data.json();
       // give entries unique ID to help with editing
-      setPhonebookEntries(
-        json.contacts.map((entry) => {
-          return { id: uuid(), ...entry };
-        })
-      );
+      const entries = json.contacts.map((entry) => {
+        return { id: uuid(), ...entry };
+      });
+      setPhonebookEntries(entries);
     };
     fetchEntries();
   }, []);
